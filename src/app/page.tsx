@@ -2,206 +2,149 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
 
-      {/* NAVBAR */}
-      <nav className="flex items-center justify-between px-8 py-6">
-        <div className="text-3xl font-black tracking-tight">
+      {/* HEADER */}
+      <header className="flex items-center justify-between px-8 py-6">
+        <div className="text-3xl font-black">
           AMB<span className="text-orange-500">SAI</span>
         </div>
 
-        <div className="hidden gap-8 text-gray-300 md:flex">
-          <span>Jak działa</span>
-          <span>Funkcje</span>
-          <span>Raport AI</span>
-        </div>
-
         <button className="rounded-xl border border-orange-500 px-5 py-2 text-orange-400">
-          Zaloguj
+          Panel AI
         </button>
-      </nav>
+      </header>
 
 
       {/* HERO */}
-      <section className="flex flex-col items-center px-6 pt-20 text-center">
+      <section className="px-6 pt-16 text-center">
 
-        <div className="rounded-full border border-orange-500/30 bg-orange-500/10 px-5 py-2 text-sm text-orange-400">
-          🤖 AI który sprawdza samochody przed zakupem
+        <div className="mx-auto w-fit rounded-full border border-orange-500/30 bg-orange-500/10 px-5 py-2 text-orange-400">
+          🤖 AI Vehicle Intelligence
         </div>
 
 
-        <h1 className="mt-8 max-w-5xl text-6xl font-black leading-tight md:text-8xl">
-          Kupuj samochody
+        <h1 className="mx-auto mt-8 max-w-5xl text-6xl font-black md:text-8xl">
+          Twój prywatny
           <br />
           <span className="text-orange-500">
-            bez ryzyka
+            ekspert samochodowy AI
           </span>
         </h1>
 
 
-        <p className="mt-8 max-w-3xl text-xl text-gray-400">
-          AMBSAI analizuje ogłoszenia samochodów,
-          wykrywa ukryte problemy, sprawdza opłacalność
-          i pomaga podjąć dobrą decyzję zakupową.
+        <p className="mx-auto mt-8 max-w-3xl text-xl text-gray-400">
+          AMBSAI analizuje samochody przed zakupem.
+          Wykrywa ryzyko, sprawdza cenę i pokazuje,
+          czy warto kupić dane auto.
         </p>
 
 
-        <div className="mt-10 flex w-full max-w-3xl flex-col gap-3 md:flex-row">
+        <div className="mx-auto mt-12 max-w-3xl rounded-3xl border border-zinc-800 bg-zinc-950 p-8">
 
-          <input
-            className="flex-1 rounded-2xl border border-zinc-700 bg-zinc-950 px-6 py-5 text-white outline-none focus:border-orange-500"
-            placeholder="Wklej link do OLX / Otomoto..."
-          />
+          <div className="relative flex h-72 items-center justify-center overflow-hidden rounded-2xl bg-black">
 
-          <button className="rounded-2xl bg-orange-500 px-10 py-5 font-bold text-black hover:bg-orange-400">
-            ANALIZUJ AUTO 🚗
-          </button>
+            <div className="absolute h-1 w-full animate-pulse bg-orange-500">
+            </div>
 
-        </div>
-
-
-        {/* CAR SCAN BOX */}
-        <div className="mt-20 w-full max-w-5xl rounded-3xl border border-zinc-800 bg-zinc-950 p-8">
-
-          <div className="flex flex-col items-center gap-8 md:flex-row">
-
-            <div className="flex h-64 w-full items-center justify-center rounded-2xl bg-gradient-to-br from-zinc-900 to-black text-7xl">
+            <div className="text-8xl">
               🚘
             </div>
 
-
-            <div className="w-full text-left">
-
-              <p className="text-orange-500">
-                AI ANALYSIS PREVIEW
-              </p>
-
-              <h2 className="mt-3 text-3xl font-bold">
-                BMW 320d G20
-              </h2>
+          </div>
 
 
-              <div className="mt-6 space-y-4">
+          <div className="mt-8 text-left">
 
-                <div>
-                  Cena
-                  <span className="float-right text-green-400">
-                    DOBRA ✅
-                  </span>
-                </div>
+            <div className="flex justify-between">
+              <span>
+                Skanowanie pojazdu
+              </span>
 
-                <div>
-                  Silnik
-                  <span className="float-right text-green-400">
-                    NISKIE RYZYKO ✅
-                  </span>
-                </div>
+              <span className="text-orange-500">
+                87%
+              </span>
+            </div>
 
-                <div>
-                  Historia
-                  <span className="float-right text-yellow-400">
-                    SPRAWDŹ ⚠️
-                  </span>
-                </div>
 
+            <div className="mt-3 h-3 rounded-full bg-zinc-800">
+              <div className="h-3 w-[87%] rounded-full bg-orange-500">
               </div>
-
-
-              <div className="mt-8 rounded-xl bg-orange-500/10 p-5 text-orange-300">
-                Ocena AI:
-                <strong className="ml-2 text-3xl">
-                  86/100
-                </strong>
-              </div>
-
             </div>
 
           </div>
 
         </div>
 
+
       </section>
 
 
 
-      {/* FEATURES */}
+      {/* AI REPORT */}
       <section className="px-6 py-24">
 
         <h2 className="text-center text-4xl font-bold">
-          Co sprawdzi AMBSAI?
+          Przykładowy raport AI
         </h2>
 
 
-        <div className="mx-auto mt-12 grid max-w-6xl gap-6 md:grid-cols-3">
+        <div className="mx-auto mt-12 max-w-4xl rounded-3xl border border-zinc-800 bg-zinc-950 p-8">
 
-          {[
-            ["🔧", "Silnik", "Typowe awarie, koszty napraw i ryzyko."],
-            ["💰", "Cena", "Czy sprzedający chce za dużo."],
-            ["⚠️", "Ukryte problemy", "Czerwone flagi przed zakupem."],
-          ].map((item) => (
+          <div className="flex justify-between">
 
-            <div
-              key={item[1]}
-              className="rounded-3xl border border-zinc-800 bg-zinc-950 p-8"
-            >
+            <div>
+              <p className="text-gray-400">
+                Analizowany samochód
+              </p>
 
-              <div className="text-4xl">
-                {item[0]}
-              </div>
-
-              <h3 className="mt-5 text-2xl font-bold">
-                {item[1]}
+              <h3 className="text-3xl font-bold">
+                BMW 330i G20
               </h3>
+            </div>
 
-              <p className="mt-3 text-gray-400">
-                {item[2]}
+
+            <div className="text-right">
+
+              <p className="text-gray-400">
+                AI Score
+              </p>
+
+              <p className="text-5xl font-black text-orange-500">
+                91
               </p>
 
             </div>
 
-          ))}
-
-        </div>
-
-      </section>
-
-
-
-      {/* HOW IT WORKS */}
-      <section className="border-t border-zinc-900 px-6 py-24">
-
-        <h2 className="text-center text-4xl font-bold">
-          Jak działa AMBSAI?
-        </h2>
-
-
-        <div className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-3">
-
-          <div className="rounded-2xl bg-zinc-950 p-8">
-            <span className="text-orange-500 text-3xl">
-              01
-            </span>
-            <h3 className="mt-4 text-xl font-bold">
-              Wklejasz ogłoszenie
-            </h3>
           </div>
 
 
-          <div className="rounded-2xl bg-zinc-950 p-8">
-            <span className="text-orange-500 text-3xl">
-              02
-            </span>
-            <h3 className="mt-4 text-xl font-bold">
-              AI analizuje auto
-            </h3>
-          </div>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+
+            <div className="rounded-xl bg-black p-5">
+              🔧 Silnik
+              <br />
+              <span className="text-green-400">
+                Bardzo dobrze
+              </span>
+            </div>
 
 
-          <div className="rounded-2xl bg-zinc-950 p-8">
-            <span className="text-orange-500 text-3xl">
-              03
-            </span>
-            <h3 className="mt-4 text-xl font-bold">
-              Dostajesz raport
-            </h3>
+            <div className="rounded-xl bg-black p-5">
+              💰 Cena
+              <br />
+              <span className="text-green-400">
+                Opłacalna
+              </span>
+            </div>
+
+
+            <div className="rounded-xl bg-black p-5">
+              ⚠ Ryzyko
+              <br />
+              <span className="text-yellow-400">
+                Sprawdź historię
+              </span>
+            </div>
+
           </div>
 
         </div>
@@ -209,18 +152,10 @@ export default function Home() {
       </section>
 
 
-      {/* FOOTER CTA */}
-      <section className="px-6 py-24 text-center">
 
-        <h2 className="text-5xl font-black">
-          Nie kupuj auta w ciemno.
-        </h2>
-
-        <button className="mt-10 rounded-2xl bg-orange-500 px-10 py-5 font-bold text-black">
-          Sprawdź samochód z AI
-        </button>
-
-      </section>
+      <footer className="border-t border-zinc-900 py-10 text-center text-gray-500">
+        AMBSAI © 2026
+      </footer>
 
 
     </main>
