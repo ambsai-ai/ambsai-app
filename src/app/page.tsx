@@ -3,6 +3,8 @@ import Hero from "@/components/Hero";
 import SearchBox from "@/components/SearchBox";
 import HowItWorks from "@/components/HowItWorks";
 import AIDemo from "@/components/AIDemo";
+import AIScore from "@/components/AIScore";
+import CarSummary from "@/components/CarSummary";
 
 export default function Home() {
   return (
@@ -12,6 +14,8 @@ export default function Home() {
       <SearchBox />
       <HowItWorks />
       <AIDemo />
+      <AIScore />
+      <CarSummary />
     </main>
   );
 }
