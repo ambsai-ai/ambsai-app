@@ -1,82 +1,104 @@
 export default function AIScore() {
   return (
-    <section className="py-24 px-6">
+    <section className="px-6 py-16">
 
       <div className="max-w-5xl mx-auto">
 
-        <h2 className="text-3xl font-bold text-center mb-12">
-          Inteligentna ocena pojazdu przez{" "}
-          <span className="text-orange-500">AI</span>
-        </h2>
-
-
         <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
 
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+          <h2 className="text-3xl font-bold mb-8">
+            🤖 AI Vehicle Score
+          </h2>
 
-            <div>
-              <p className="text-gray-400">
-                AI Vehicle Score
+
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+
+
+            <div className="text-center">
+
+              <div className="w-48 h-48 mx-auto rounded-full border-8 border-orange-500 flex items-center justify-center">
+
+                <div>
+                  <p className="text-6xl font-bold">
+                    86
+                  </p>
+
+                  <p className="text-gray-400">
+                    /100
+                  </p>
+                </div>
+
+              </div>
+
+
+              <p className="mt-6 text-2xl font-bold text-green-400">
+                🟢 Dobry zakup
               </p>
 
-              <h3 className="text-6xl font-bold text-green-400 mt-2">
-                92<span className="text-3xl">/100</span>
-              </h3>
-
-              <p className="mt-4 text-gray-400">
-                Samochód oceniony jako niski poziom ryzyka zakupu.
-              </p>
             </div>
 
 
-            <div className="grid gap-4 w-full md:w-auto">
 
-              <div className="bg-black rounded-xl px-6 py-4">
-                <span className="text-green-400">
-                  ✓
-                </span>{" "}
-                Silnik: dobra opinia
+            <div className="space-y-5">
+
+
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span>
+                    Stan techniczny
+                  </span>
+
+                  <span className="text-green-400">
+                    90%
+                  </span>
+                </div>
+
+                <div className="h-3 bg-black rounded-full overflow-hidden">
+                  <div className="h-full bg-green-500 w-[90%]" />
+                </div>
               </div>
 
 
-              <div className="bg-black rounded-xl px-6 py-4">
-                <span className="text-yellow-400">
-                  ⚠
-                </span>{" "}
-                Dwumasa: sprawdzić przed zakupem
+
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span>
+                    Ryzyko awarii
+                  </span>
+
+                  <span className="text-yellow-400">
+                    70%
+                  </span>
+                </div>
+
+                <div className="h-3 bg-black rounded-full overflow-hidden">
+                  <div className="h-full bg-yellow-500 w-[70%]" />
+                </div>
               </div>
 
 
-              <div className="bg-black rounded-xl px-6 py-4">
-                <span className="text-red-400">
-                  ⚠
-                </span>{" "}
-                EGR: możliwe koszty
+
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span>
+                    Opłacalność zakupu
+                  </span>
+
+                  <span className="text-orange-400">
+                    85%
+                  </span>
+                </div>
+
+                <div className="h-3 bg-black rounded-full overflow-hidden">
+                  <div className="h-full bg-orange-500 w-[85%]" />
+                </div>
               </div>
+
 
             </div>
+
 
           </div>
-
-
-          <div className="mt-10">
-
-            <div className="flex justify-between text-sm text-gray-400 mb-2">
-              <span>Ocena AI</span>
-              <span>92%</span>
-            </div>
-
-            <div className="h-3 bg-black rounded-full overflow-hidden">
-
-              <div
-                className="h-full bg-orange-500 rounded-full"
-                style={{ width: "92%" }}
-              />
-
-            </div>
-
-          </div>
-
 
         </div>
 
