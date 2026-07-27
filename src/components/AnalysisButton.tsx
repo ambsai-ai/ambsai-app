@@ -13,7 +13,7 @@ export default function AnalysisButton({ carUrl }: Props) {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const startAnalysis = () => {
+  const startAnalysis = async () => {
     if (!carUrl.trim()) {
       alert("Wklej najpierw link do ogłoszenia auta");
       return;
@@ -23,19 +23,64 @@ export default function AnalysisButton({ carUrl }: Props) {
 
     let value = 0;
 
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       value += 20;
       setProgress(value);
 
       if (value >= 100) {
         clearInterval(interval);
 
-        localStorage.setItem("carUrl", carUrl);
 
-        setTimeout(() => {
-          router.push("/raport");
-        }, 500);
+        try {
+
+          const response = await fetch("/api/analyze", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              url: carUrl,
+            }),
+          });
+
+
+          const data = await response.json();
+
+
+          if (data.success) {
+
+            localStorage.setItem(
+              "analysis",
+              JSON.stringify(data.analysis)
+            );
+
+            localStorage.setItem(
+              "carUrl",
+              carUrl
+            );
+
+
+            router.push("/raport");
+
+          } else {
+
+            alert("Nie udało się przeanalizować auta");
+            setLoading(false);
+
+          }
+
+
+        } catch (error) {
+
+          console.error(error);
+
+          alert("Błąd połączenia z AI");
+          setLoading(false);
+
+        }
+
       }
+
     }, 500);
   };
 
@@ -48,20 +93,26 @@ export default function AnalysisButton({ carUrl }: Props) {
           🤖 AI analizuje pojazd...
         </p>
 
+
         <div className="mt-5 h-3 bg-zinc-800 rounded-full overflow-hidden">
+
           <div
             className="h-full bg-orange-500 transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
+
         </div>
 
 
         <div className="mt-6 text-gray-400 text-sm space-y-2">
+
           <p>✓ Sprawdzanie ogłoszenia</p>
           <p>✓ Analiza danych technicznych</p>
           <p>✓ Wyszukiwanie typowych awarii</p>
-          <p>✓ Przygotowanie raportu AI</p>
+          <p>✓ Generowanie raportu AI</p>
+
         </div>
+
 
       </div>
     );
