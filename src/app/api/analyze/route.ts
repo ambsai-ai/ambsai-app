@@ -1,163 +1,119 @@
+import OpenAI from "openai";
 import { NextResponse } from "next/server";
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 export async function POST(request: Request) {
-
   try {
-
     const body = await request.json();
 
     const { url } = body;
 
 
     if (!url) {
-
       return NextResponse.json(
         {
-          error: "Brak linku do ogłoszenia"
+          error: "Brak linku do ogłoszenia",
         },
         {
-          status: 400
+          status: 400,
         }
       );
-
     }
 
 
+    const completion = await openai.chat.completions.create({
 
-    // TEMP - dane testowe
-    // Później tutaj podpinamy OpenAI API
+      model: "gpt-5-mini",
 
-    const analysis = {
-
-      url,
-
-
-      car: {
-
-        brand: "Audi",
-
-        model: "A4 B9",
-
-        year: 2018,
-
-        engine: "2.0 TDI",
-
-        mileage: "164 000 km",
-
-        price: "79 900 zł"
-
+      response_format: {
+        type: "json_object",
       },
 
 
-
-      score: 86,
-
-
-
-      technicalCondition: 90,
-
-
-
-      risks: [
-
-        "Dwumasowe koło zamachowe",
-
-        "Układ EGR",
-
-        "Elementy zawieszenia"
-
-      ],
-
-
-
-      failures: [
-
-        "Dwumasowe koło zamachowe",
-
-        "Układ EGR",
-
-        "Elementy zawieszenia"
-
-      ],
-
-
-
-      costs: [
+      messages: [
 
         {
+          role: "system",
 
-          title: "Serwis okresowy",
+          content: `
+Jesteś AMBSAI - ekspertem od zakupu samochodów.
 
-          price: "800 - 1500 zł",
+Twoim zadaniem jest przygotować analizę auta.
 
-          period: "rocznie",
+Nie wymyślaj danych z ogłoszenia.
+Jeżeli czegoś nie ma, wpisz "brak danych".
 
-          description:
-            "Olej, filtry oraz podstawowa obsługa."
+Zwróć wyłącznie JSON:
 
+{
+ "score": 0,
+ "car": {
+   "brand": "",
+   "model": "",
+   "year": "",
+   "engine": "",
+   "mileage": "",
+   "price": ""
+ },
+ "technicalCondition": 0,
+ "failures": [
+   {
+    "title":"",
+    "risk":"",
+    "cost":"",
+    "description":""
+   }
+ ],
+ "costs":[
+   {
+    "title":"",
+    "price":"",
+    "period":"",
+    "description":""
+   }
+ ],
+ "pros":[],
+ "cons":[],
+ "recommendation":""
+}
+`
         },
 
 
         {
+          role: "user",
 
-          title: "Naprawy eksploatacyjne",
+          content: `
+Przeanalizuj ogłoszenie samochodu:
 
-          price: "1500 - 3000 zł",
+${url}
 
-          period: "rocznie",
-
-          description:
-            "Hamulce, zawieszenie oraz części zużywalne."
-
-        },
-
-
-        {
-
-          title: "Rezerwa awaryjna",
-
-          price: "3000 - 5000 zł",
-
-          period: "zalecana",
-
-          description:
-            "Budżet na nieprzewidziane naprawy."
-
+Oceń:
+- typowe awarie silnika
+- koszty utrzymania
+- ryzyko zakupu
+- opłacalność
+`
         }
 
-      ],
+      ]
+
+    });
 
 
-
-      pros: [
-
-        "Popularny model",
-
-        "Dostępność części",
-
-        "Dobry silnik"
-
-      ],
+    const content =
+      completion.choices[0]?.message?.content;
 
 
-
-      cons: [
-
-        "Możliwe koszty diesla",
-
-        "Historia serwisowa do sprawdzenia",
-
-        "Stan skrzyni wymaga kontroli"
-
-      ],
+    if (!content) {
+      throw new Error("AI nie zwróciło odpowiedzi");
+    }
 
 
-
-      recommendation:
-
-        "Auto wygląda interesująco, ale przed zakupem zalecana jest kontrola historii serwisowej oraz dokładne oględziny."
-
-    };
+    const analysis = JSON.parse(content);
 
 
 
@@ -171,25 +127,26 @@ export async function POST(request: Request) {
 
 
 
-  } catch (error) {
+  } catch (error: any) {
+
+
+    console.error("ANALYZE ERROR:", error);
+
 
 
     return NextResponse.json(
 
       {
-
-        error: "Błąd analizy"
-
+        error:
+          error?.message ||
+          "Błąd analizy AI"
       },
 
       {
-
         status: 500
-
       }
 
     );
 
   }
-
 }
