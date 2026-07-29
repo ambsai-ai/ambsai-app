@@ -9,7 +9,6 @@ type Props = {
 };
 
 
-
 export default function AnalysisButton({ carUrl }: Props) {
 
   const router = useRouter();
@@ -25,9 +24,11 @@ export default function AnalysisButton({ carUrl }: Props) {
     if (!carUrl.trim()) {
 
       alert("Wklej najpierw link do ogłoszenia auta");
+
       return;
 
     }
+
 
 
     setLoading(true);
@@ -37,7 +38,7 @@ export default function AnalysisButton({ carUrl }: Props) {
     try {
 
 
-      setStatus("🔎 Pobieranie danych ogłoszenia...");
+      setStatus("🔎 Analiza ogłoszenia...");
 
 
 
@@ -57,7 +58,8 @@ export default function AnalysisButton({ carUrl }: Props) {
 
 
 
-      setStatus("🤖 AI analizuje silnik i ryzyka...");
+
+      setStatus("🤖 AI sprawdza auto i ryzyko zakupu...");
 
 
 
@@ -65,46 +67,148 @@ export default function AnalysisButton({ carUrl }: Props) {
 
 
 
-      if (!data.success) {
+      if (!data.success || !data.analysis) {
 
-        throw new Error(data.error);
+        throw new Error(
+          data.error || "AI nie zwróciło analizy"
+        );
 
       }
 
 
 
-      setStatus("📊 Tworzenie raportu...");
+      const analysis = data.analysis;
 
 
 
-      // zapis aktualnego raportu
+      setStatus("📊 Tworzenie raportu AMBSAI...");
+
+
+
+
+      // aktualny raport
 
       localStorage.setItem(
         "analysis",
-        JSON.stringify(data.analysis)
+        JSON.stringify(analysis)
       );
 
 
 
-      // zapis historii analiz
 
-      const oldHistory = JSON.parse(
-        localStorage.getItem("analysisHistory") || "[]"
+      // link ogłoszenia
+
+      localStorage.setItem(
+        "carUrl",
+        carUrl
       );
 
 
 
-      const newHistory = [
 
-        {
-          ...data.analysis,
-          analyzedAt: new Date().toISOString(),
-          url: carUrl,
-        },
 
-        ...oldHistory,
+      // historia analiz
 
-      ];
+      let history = [];
+
+
+      try {
+
+        history = JSON.parse(
+          localStorage.getItem("analysisHistory") || "[]"
+        );
+
+
+      } catch {
+
+        history = [];
+
+      }
+
+
+
+
+
+
+      const historyItem = {
+
+        id: crypto.randomUUID(),
+
+        analyzedAt: new Date().toISOString(),
+
+        url: carUrl,
+
+
+        car: analysis.car || {},
+
+
+        score:
+          analysis.score || 0,
+
+
+
+        decision:
+          analysis.decision || {
+
+            status: "brak danych",
+
+            reason: ""
+
+          },
+
+
+
+        recommendation:
+          analysis.recommendation || "",
+
+
+
+        sellerQuestions:
+          analysis.sellerQuestions || [],
+
+
+
+        inspectionChecklist:
+          analysis.inspectionChecklist || [],
+
+
+
+        negotiationPoints:
+          analysis.negotiationPoints || [],
+
+
+
+        documentsToCheck:
+          analysis.documentsToCheck || [],
+
+
+
+        failures:
+          analysis.failures || [],
+
+
+
+        costs:
+          analysis.costs || [],
+
+
+      };
+
+
+
+
+
+
+      const updatedHistory = [
+
+        historyItem,
+
+        ...history,
+
+      ].slice(0,10);
+
+
+
 
 
 
@@ -112,9 +216,19 @@ export default function AnalysisButton({ carUrl }: Props) {
 
         "analysisHistory",
 
-        JSON.stringify(newHistory.slice(0,10))
+        JSON.stringify(updatedHistory)
 
       );
+
+
+
+
+
+
+      setStatus("✅ Raport gotowy");
+
+
+
 
 
 
@@ -126,19 +240,37 @@ export default function AnalysisButton({ carUrl }: Props) {
 
 
 
+
+
+
     } catch(error) {
 
 
-      console.error("ANALYSIS ERROR:", error);
+
+      console.error(
+        "ANALYSIS ERROR:",
+        error
+      );
 
 
-      alert("Nie udało się wykonać analizy AI");
+
+      alert(
+
+        error instanceof Error
+
+          ? error.message
+
+          : "Nie udało się wykonać analizy AI"
+
+      );
+
 
 
       setLoading(false);
 
 
     }
+
 
   }
 
@@ -162,17 +294,26 @@ export default function AnalysisButton({ carUrl }: Props) {
 
 
 
+
         <div className="mt-6 text-gray-400 text-sm space-y-2">
+
 
           <p>✓ Analiza ogłoszenia</p>
 
-          <p>✓ Ocena silnika</p>
+          <p>✓ Ocena historii auta</p>
 
           <p>✓ Typowe awarie modelu</p>
 
           <p>✓ Koszty utrzymania</p>
 
-          <p>✓ Raport końcowy</p>
+          <p>✓ Pytania do sprzedającego</p>
+
+          <p>✓ Kontrola auta na miejscu</p>
+
+          <p>✓ Negocjacja ceny</p>
+
+          <p>✓ Decyzja KUP / NEGOCJUJ / ODPUŚĆ</p>
+
 
         </div>
 
@@ -181,8 +322,8 @@ export default function AnalysisButton({ carUrl }: Props) {
 
     );
 
-
   }
+
 
 
 

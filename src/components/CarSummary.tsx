@@ -2,45 +2,199 @@
 
 import { useEffect, useState } from "react";
 
+
 type Analysis = {
+
   car?: {
     brand?: string;
     model?: string;
-    year?: number;
+    year?: string | number;
     engine?: string;
     mileage?: string;
+    price?: string | number;
   };
+
+
   score?: number;
+
+
+  technicalCondition?: number;
+
+
+  decision?: {
+    status?: string;
+    reason?: string;
+  };
+
+
 };
+
+
 
 export default function CarSummary() {
 
-  const [analysis, setAnalysis] = useState<Analysis | null>(null);
+
+  const [analysis,setAnalysis] =
+    useState<Analysis | null>(null);
 
 
-  useEffect(() => {
-    const savedAnalysis = localStorage.getItem("analysis");
 
-    if (savedAnalysis) {
-      setAnalysis(JSON.parse(savedAnalysis));
+  useEffect(()=>{
+
+
+    const saved =
+      localStorage.getItem("analysis");
+
+
+    if(saved){
+
+      try {
+
+        setAnalysis(
+          JSON.parse(saved)
+        );
+
+
+      } catch {
+
+        setAnalysis(null);
+
+      }
+
     }
 
-  }, []);
+
+  },[]);
 
 
 
-  const car = analysis?.car;
+
+
+  const car =
+    analysis?.car;
+
+
+
+  function value(
+    text?: string | number
+  ){
+
+    if(
+      text === undefined ||
+      text === null ||
+      text === ""
+    ){
+
+      return "Brak danych";
+
+    }
+
+
+    return text;
+
+  }
+
+
+
+
+
+  const fullName = [
+
+    car?.brand,
+
+    car?.model
+
+  ]
+  .filter(Boolean)
+  .join(" ");
+
+
+
+
+
+
+  const status =
+    analysis?.decision?.status
+    ?.toLowerCase() || "";
+
+
+
+
+  let decision =
+    "Brak decyzji";
+
+
+  let decisionColor =
+    "text-yellow-400";
+
+
+
+
+  if(status.includes("kup")){
+
+
+    decision =
+      "🟢 KUP";
+
+
+    decisionColor =
+      "text-green-400";
+
+
+  }
+
+
+  else if(status.includes("negocju")){
+
+
+    decision =
+      "🟡 NEGOCJUJ";
+
+
+    decisionColor =
+      "text-yellow-400";
+
+
+  }
+
+
+  else if(status.includes("odpu")){
+
+
+    decision =
+      "🔴 ODPUŚĆ";
+
+
+    decisionColor =
+      "text-red-400";
+
+
+  }
+
+
+
+
 
 
   return (
+
+
     <section className="px-6 py-16">
+
 
       <div className="max-w-5xl mx-auto">
 
 
+
+
+
         <h2 className="text-3xl font-bold mb-8">
+
           🚗 Podsumowanie pojazdu
+
         </h2>
+
+
 
 
 
@@ -48,94 +202,183 @@ export default function CarSummary() {
 
 
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-
-            <p className="text-gray-400">
-              Marka i model
-            </p>
-
-            <p className="text-2xl font-bold mt-2">
-              {car?.brand} {car?.model}
-            </p>
-
-          </div>
 
 
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
 
-            <p className="text-gray-400">
-              Rok produkcji
-            </p>
-
-            <p className="text-2xl font-bold mt-2">
-              {car?.year}
-            </p>
-
-          </div>
+          <InfoCard
+            title="Marka i model"
+            value={fullName}
+          />
 
 
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-
-            <p className="text-gray-400">
-              Silnik
-            </p>
-
-            <p className="text-2xl font-bold mt-2">
-              {car?.engine}
-            </p>
-
-          </div>
+          <InfoCard
+            title="Rok produkcji"
+            value={value(car?.year)}
+          />
 
 
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-
-            <p className="text-gray-400">
-              Przebieg
-            </p>
-
-            <p className="text-2xl font-bold mt-2">
-              {car?.mileage}
-            </p>
-
-          </div>
+          <InfoCard
+            title="Silnik"
+            value={value(car?.engine)}
+          />
 
 
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <InfoCard
+            title="Przebieg"
+            value={value(car?.mileage)}
+          />
 
-            <p className="text-gray-400">
-              Szacowana cena
-            </p>
 
-            <p className="text-2xl font-bold mt-2 text-orange-400">
-              79 900 zł
-            </p>
 
-          </div>
+          <InfoCard
+            title="Cena z ogłoszenia"
+            value={value(car?.price)}
+            orange
+          />
+
+
+
+          <InfoCard
+            title="Ocena AI"
+            value={`${value(analysis?.score)} / 100`}
+            orange
+          />
+
+
+
+          <InfoCard
+            title="Stan techniczny AI"
+            value={`${value(analysis?.technicalCondition)} / 100`}
+          />
+
+
 
 
 
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
 
+
             <p className="text-gray-400">
-              Ocena AI
+
+              Decyzja zakupowa AMBSAI
+
             </p>
 
-            <p className="text-2xl font-bold mt-2 text-green-400">
-              {analysis?.score} / 100
+
+
+            <p className={`text-3xl font-bold mt-3 ${decisionColor}`}>
+
+              {decision}
+
             </p>
+
 
           </div>
+
+
+
 
 
         </div>
 
 
+
+
+
+
+        {analysis?.decision?.reason && (
+
+
+          <div className="mt-6 bg-zinc-900 border border-orange-500/30 rounded-2xl p-6">
+
+
+            <h3 className="font-bold text-xl">
+
+              🤖 Dlaczego taka decyzja?
+
+            </h3>
+
+
+            <p className="text-gray-400 mt-3 leading-relaxed">
+
+              {analysis.decision.reason}
+
+            </p>
+
+
+          </div>
+
+
+        )}
+
+
+
+
+
+
+
       </div>
 
+
     </section>
+
+
   );
+
+}
+
+
+
+
+
+
+function InfoCard({
+
+  title,
+
+  value,
+
+  orange=false
+
+
+}:{
+
+  title:string;
+
+  value:string | number;
+
+  orange?:boolean;
+
+}){
+
+
+  return (
+
+    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+
+
+      <p className="text-gray-400">
+
+        {title}
+
+      </p>
+
+
+
+      <p className={`text-2xl font-bold mt-3 ${orange ? "text-orange-400" : ""}`}>
+
+        {value}
+
+      </p>
+
+
+
+    </div>
+
+  );
+
 }

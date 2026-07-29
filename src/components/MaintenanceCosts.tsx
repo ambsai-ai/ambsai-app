@@ -4,185 +4,633 @@ import { useEffect, useState } from "react";
 
 
 type Cost = {
-  title: string;
-  price: string;
-  period: string;
-  description: string;
+
+  title?: string;
+
+  price?: string;
+
+  period?: string;
+
+  description?: string;
+
+  priority?: string;
+
 };
+
+
+
+type CostAnalysis = {
+
+  serviceCost?: string;
+
+  repairRisk?: string;
+
+  firstYearBudget?: string;
+
+  summary?: string;
+
+};
+
 
 
 type Analysis = {
+
+
   costs?: Cost[];
-  score?: number;
+
+
+  recommendation?: string;
+
+
+  riskLevel?: {
+
+    level?: string;
+
+    reason?: string;
+
+  };
+
+
+  costAnalysis?: CostAnalysis;
+
+
 };
 
 
 
-export default function MaintenanceCosts() {
-
-  const [costs, setCosts] = useState<Cost[]>([]);
-
-  const [score, setScore] = useState(0);
 
 
 
-  useEffect(() => {
-
-    const savedAnalysis = localStorage.getItem("analysis");
+export default function MaintenanceCosts(){
 
 
-    if (savedAnalysis) {
+  const [costs,setCosts] =
+    useState<Cost[]>([]);
 
-      const data: Analysis = JSON.parse(savedAnalysis);
 
 
-      if (data.costs) {
-        setCosts(data.costs);
+  const [recommendation,setRecommendation] =
+    useState("");
+
+
+
+  const [risk,setRisk] =
+    useState("");
+
+
+
+  const [riskReason,setRiskReason] =
+    useState("");
+
+
+
+  const [costAnalysis,setCostAnalysis] =
+    useState<CostAnalysis>({});
+
+
+
+
+
+
+
+  useEffect(()=>{
+
+
+    const saved =
+      localStorage.getItem("analysis");
+
+
+
+    if(saved){
+
+
+      try {
+
+
+        const data:Analysis =
+          JSON.parse(saved);
+
+
+
+        const sorted =
+          (data.costs || []).sort((a,b)=>{
+
+
+            const priority:any = {
+
+
+              "wysoki":1,
+
+              "średni":2,
+
+              "sredni":2,
+
+              "niski":3
+
+
+            };
+
+
+
+            return (
+
+              priority[
+                a.priority?.toLowerCase() || ""
+              ] || 4
+
+            )
+            -
+            (
+
+              priority[
+                b.priority?.toLowerCase() || ""
+              ] || 4
+
+            );
+
+
+          });
+
+
+
+
+        setCosts(sorted);
+
+
+
+        setRecommendation(
+          data.recommendation || ""
+        );
+
+
+
+        setRisk(
+          data.riskLevel?.level || ""
+        );
+
+
+
+        setRiskReason(
+          data.riskLevel?.reason || ""
+        );
+
+
+
+        setCostAnalysis(
+          data.costAnalysis || {}
+        );
+
+
+
+      } catch(error){
+
+
+        console.error(
+          "MAINTENANCE LOAD ERROR:",
+          error
+        );
+
+
       }
 
 
-      if (data.score) {
-        setScore(data.score);
-      }
+    }
+
+
+  },[]);
+
+
+
+
+
+
+
+  const defaultCosts:Cost[]=[
+
+
+    {
+
+      title:"Serwis startowy",
+
+      price:"800 - 1500 zł",
+
+      period:"po zakupie",
+
+      priority:"średni",
+
+      description:
+      "Olej, filtry, płyny oraz podstawowe sprawdzenie auta."
+
+    },
+
+
+
+    {
+
+      title:"Naprawy eksploatacyjne",
+
+      price:"1500 - 3000 zł",
+
+      period:"pierwszy rok",
+
+      priority:"średni",
+
+      description:
+      "Hamulce, zawieszenie, opony i elementy zużywające się."
+
+    },
+
+
+
+    {
+
+      title:"Rezerwa bezpieczeństwa",
+
+      price:"3000 - 5000 zł",
+
+      period:"zalecana",
+
+      priority:"wysoki",
+
+      description:
+      "Budżet na nieprzewidziane awarie po zakupie."
 
     }
 
-  }, []);
-
-
-
-
-  const defaultCosts: Cost[] = [
-
-    {
-      title: "Serwis okresowy",
-      price: "800 - 1500 zł",
-      period: "rocznie",
-      description:
-        "Olej, filtry, podstawowy przegląd i bieżąca obsługa."
-    },
-
-    {
-      title: "Naprawy eksploatacyjne",
-      price: "1500 - 3000 zł",
-      period: "rocznie",
-      description:
-        "Hamulce, zawieszenie, elementy zużywające się."
-    },
-
-    {
-      title: "Rezerwa awaryjna",
-      price: "3000 - 5000 zł",
-      period: "zalecana",
-      description:
-        "Bezpieczny budżet na niespodziewane usterki."
-    }
 
   ];
 
 
 
-  const displayCosts = costs.length > 0 ? costs : defaultCosts;
 
 
 
-  let costStatus = "🟡 Koszty: umiarkowane";
+
+  const displayCosts =
+    costs.length > 0
+    ? costs
+    : defaultCosts;
 
 
-  if (score >= 85) {
-    costStatus = "🟢 Koszty: niskie ryzyko";
+
+
+
+
+
+  function riskStyle(){
+
+
+    const value =
+      risk.toLowerCase();
+
+
+
+    if(value.includes("wysok")){
+
+
+      return {
+
+        text:"text-red-400",
+
+        icon:"🔴"
+
+      };
+
+
+    }
+
+
+
+    if(
+      value.includes("śred") ||
+      value.includes("sred")
+    ){
+
+
+      return {
+
+        text:"text-yellow-400",
+
+        icon:"🟡"
+
+      };
+
+
+    }
+
+
+
+    if(value.includes("niski")){
+
+
+      return {
+
+        text:"text-green-400",
+
+        icon:"🟢"
+
+      };
+
+
+    }
+
+
+
+    return {
+
+      text:"text-gray-400",
+
+      icon:"⚪"
+
+    };
+
+
   }
 
 
-  if (score < 60 && score > 0) {
-    costStatus = "🔴 Koszty: podwyższone ryzyko";
-  }
+
+
+
+
+  const riskData =
+    riskStyle();
+
+
+
+
+
 
 
 
   return (
+
+
     <section className="px-6 py-16">
 
 
       <div className="max-w-5xl mx-auto">
 
 
-        <h2 className="text-3xl font-bold mb-8">
-          💰 Koszty utrzymania
-        </h2>
+
+
+
+        <div className="flex justify-between items-center mb-8">
+
+
+          <h2 className="text-3xl font-bold">
+
+            💰 Koszty po zakupie AMBSAI
+
+          </h2>
+
+
+
+          <span className="text-gray-400">
+
+            {displayCosts.length} pozycji
+
+          </span>
+
+
+        </div>
+
+
+
+
 
 
 
         <div className="grid md:grid-cols-3 gap-6">
 
 
+          {displayCosts.map((item,index)=>(
 
-          {displayCosts.map((item) => (
 
             <div
-              key={item.title}
-              className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6"
+
+              key={index}
+
+              className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 hover:border-orange-500 transition"
+
             >
 
 
+
               <h3 className="text-xl font-bold">
-                {item.title}
+
+                {item.title || "Koszt"}
+
               </h3>
 
 
 
+
               <p className="text-orange-400 text-2xl font-bold mt-4">
-                {item.price}
+
+                {item.price || "Brak danych"}
+
               </p>
+
 
 
 
               <p className="text-gray-400 mt-1">
+
                 {item.period}
+
               </p>
 
 
 
-              <p className="text-gray-400 mt-5">
-                {item.description}
+
+
+              {item.priority && (
+
+                <p className="text-yellow-400 mt-4 font-bold">
+
+                  ⚠️ Priorytet: {item.priority}
+
+                </p>
+
+              )}
+
+
+
+
+
+
+              <p className="text-gray-400 mt-5 leading-relaxed">
+
+                {item.description || "Brak opisu"}
+
+              </p>
+
+
+
+
+            </div>
+
+
+          ))}
+
+
+        </div>
+
+
+
+
+
+
+
+
+        <div className="mt-10 bg-zinc-900 border border-orange-500/30 rounded-2xl p-6">
+
+
+
+
+
+          <h3 className="text-xl font-bold">
+
+            🤖 Finansowa analiza AMBSAI
+
+          </h3>
+
+
+
+
+
+          {risk && (
+
+            <div className="mt-5 bg-black rounded-xl p-5">
+
+
+              <p className={`font-bold text-xl ${riskData.text}`}>
+
+                {riskData.icon} Ryzyko kosztów: {risk}
+
+              </p>
+
+
+
+              <p className="text-gray-400 mt-3">
+
+                {riskReason}
+
               </p>
 
 
             </div>
 
-          ))}
-
-
-
-        </div>
+          )}
 
 
 
 
 
-        <div className="mt-8 bg-zinc-900 border border-orange-500/30 rounded-2xl p-6">
 
 
-          <h3 className="text-xl font-bold">
-            🤖 Ocena AI kosztów
-          </h3>
+          <div className="grid md:grid-cols-3 gap-5 mt-6">
+
+
+            <div className="bg-black rounded-xl p-5">
+
+              <p className="text-gray-400">
+
+                Pierwszy serwis
+
+              </p>
+
+              <p className="text-orange-400 font-bold mt-3">
+
+                {costAnalysis.serviceCost || "Brak danych"}
+
+              </p>
+
+            </div>
 
 
 
-          <p className="text-gray-400 mt-3">
-            AMBSAI ocenia przewidywane koszty utrzymania
-            na podstawie danych pojazdu oraz historii typowych usterek.
-          </p>
+
+
+            <div className="bg-black rounded-xl p-5">
+
+              <p className="text-gray-400">
+
+                Budżet pierwszego roku
+
+              </p>
+
+              <p className="text-orange-400 font-bold mt-3">
+
+                {costAnalysis.firstYearBudget || "Brak danych"}
+
+              </p>
+
+            </div>
 
 
 
-          <div className="mt-5 text-green-400 font-bold text-2xl">
-            {costStatus}
+
+
+
+            <div className="bg-black rounded-xl p-5">
+
+              <p className="text-gray-400">
+
+                Ryzyko napraw
+
+              </p>
+
+              <p className="text-orange-400 font-bold mt-3">
+
+                {costAnalysis.repairRisk || "Brak danych"}
+
+              </p>
+
+            </div>
+
+
           </div>
 
 
 
+
+
+
+
+          {costAnalysis.summary && (
+
+            <p className="text-gray-400 mt-6 leading-relaxed">
+
+              💡 {costAnalysis.summary}
+
+            </p>
+
+          )}
+
+
+
+
+
+
+
+          <div className="mt-6 text-orange-400 font-bold text-xl">
+
+
+            {recommendation ||
+
+            "Brak dodatkowej oceny kosztów."}
+
+
+          </div>
+
+
+
+
+
         </div>
+
+
 
 
 
@@ -190,5 +638,9 @@ export default function MaintenanceCosts() {
 
 
     </section>
+
+
   );
+
+
 }
