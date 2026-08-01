@@ -3,7 +3,9 @@
 import { useState } from "react";
 import AnalysisButton from "@/components/AnalysisButton";
 
+
 export default function SearchBox() {
+
 
   const [url, setUrl] = useState("");
 
@@ -19,7 +21,6 @@ export default function SearchBox() {
         <div className="flex flex-col md:flex-row gap-3">
 
 
-
           <input
 
             value={url}
@@ -33,13 +34,10 @@ export default function SearchBox() {
           />
 
 
-
+          <AnalysisButton carUrl={url}/>
 
 
         </div>
-
-
-        <AnalysisButton carUrl={url} />
 
 
       </div>
