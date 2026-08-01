@@ -9,21 +9,67 @@ type Props = {
 };
 
 
+const steps = [
+  {
+    text: "🔎 Analiza ogłoszenia samochodu...",
+    progress: 15,
+  },
+  {
+    text: "🤖 AI sprawdza dane pojazdu i silnik...",
+    progress: 30,
+  },
+  {
+    text: "⚠️ Wykrywanie typowych awarii modelu...",
+    progress: 45,
+  },
+  {
+    text: "💰 Szacowanie kosztów napraw i utrzymania...",
+    progress: 60,
+  },
+  {
+    text: "💬 Przygotowanie argumentów negocjacyjnych...",
+    progress: 75,
+  },
+  {
+    text: "📊 Tworzenie raportu AMBSAI...",
+    progress: 90,
+  },
+  {
+    text: "✅ Raport gotowy",
+    progress: 100,
+  },
+];
+
+
 export default function AnalysisButton({ carUrl }: Props) {
+
 
   const router = useRouter();
 
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("");
+
+  const [loading,setLoading] =
+    useState(false);
+
+
+  const [status,setStatus] =
+    useState("");
+
+
+  const [progress,setProgress] =
+    useState(0);
 
 
 
-  async function startAnalysis() {
 
 
-    if (!carUrl.trim()) {
+  async function startAnalysis(){
 
-      alert("Wklej najpierw link do ogłoszenia auta");
+
+    if(!carUrl.trim()){
+
+      alert(
+        "Wklej najpierw link do ogłoszenia auta"
+      );
 
       return;
 
@@ -31,99 +77,174 @@ export default function AnalysisButton({ carUrl }: Props) {
 
 
 
+
     setLoading(true);
 
 
 
-    try {
 
-
-      setStatus("🔎 Analiza ogłoszenia...");
-
-
-
-      const response = await fetch("/api/analyze", {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          url: carUrl,
-        }),
-
-      });
+    let stepIndex = 0;
 
 
 
-
-      setStatus("🤖 AI sprawdza auto i ryzyko zakupu...");
-
+    const loader = setInterval(()=>{
 
 
-      const data = await response.json();
+      if(stepIndex < steps.length){
+
+
+        setStatus(
+          steps[stepIndex].text
+        );
+
+
+        setProgress(
+          steps[stepIndex].progress
+        );
+
+
+        stepIndex++;
+
+
+      }
+
+
+    },3000);
 
 
 
-      if (!data.success || !data.analysis) {
+
+
+
+
+    try{
+
+
+      const response =
+        await fetch("/api/analyze",{
+
+
+          method:"POST",
+
+
+          headers:{
+
+
+            "Content-Type":
+            "application/json",
+
+
+          },
+
+
+          body:JSON.stringify({
+
+            url:carUrl
+
+          })
+
+
+        });
+
+
+
+
+
+
+
+      const data =
+        await response.json();
+
+
+
+
+
+
+      if(
+        !data.success ||
+        !data.analysis
+      ){
 
         throw new Error(
-          data.error || "AI nie zwróciło analizy"
+
+          data.error ||
+          "AI nie zwróciło analizy"
+
         );
 
       }
 
 
 
-      const analysis = data.analysis;
-
-
-
-      setStatus("📊 Tworzenie raportu AMBSAI...");
 
 
 
 
-      // aktualny raport
+      const analysis =
+        data.analysis;
+
+
+
+
+
+
 
       localStorage.setItem(
+
         "analysis",
+
         JSON.stringify(analysis)
+
       );
 
 
 
 
-      // link ogłoszenia
 
       localStorage.setItem(
+
         "carUrl",
+
         carUrl
+
       );
 
 
 
 
 
-      // historia analiz
-
-      let history = [];
 
 
-      try {
-
-        history = JSON.parse(
-          localStorage.getItem("analysisHistory") || "[]"
-        );
 
 
-      } catch {
+      let history:any[] = [];
 
-        history = [];
+
+
+      try{
+
+
+        history =
+          JSON.parse(
+
+            localStorage.getItem(
+              "analysisHistory"
+            ) || "[]"
+
+          );
+
+
+
+      }catch{
+
+
+        history=[];
+
 
       }
+
+
+
 
 
 
@@ -132,67 +253,75 @@ export default function AnalysisButton({ carUrl }: Props) {
 
       const historyItem = {
 
-        id: crypto.randomUUID(),
 
-        analyzedAt: new Date().toISOString(),
-
-        url: carUrl,
+        id:
+        crypto.randomUUID(),
 
 
-        car: analysis.car || {},
+
+        analyzedAt:
+        new Date().toISOString(),
+
+
+
+        url:
+        carUrl,
+
+
+
+        car:
+        analysis.car || {},
+
 
 
         score:
-          analysis.score || 0,
+        analysis.score || 0,
 
 
 
         decision:
-          analysis.decision || {
-
-            status: "brak danych",
-
-            reason: ""
-
-          },
+        analysis.decision || {},
 
 
 
         recommendation:
-          analysis.recommendation || "",
+        analysis.recommendation || "",
 
 
 
         sellerQuestions:
-          analysis.sellerQuestions || [],
+        analysis.sellerQuestions || [],
 
 
 
         inspectionChecklist:
-          analysis.inspectionChecklist || [],
+        analysis.inspectionChecklist || [],
 
 
 
         negotiationPoints:
-          analysis.negotiationPoints || [],
+        analysis.negotiationPoints || [],
 
 
 
         documentsToCheck:
-          analysis.documentsToCheck || [],
+        analysis.documentsToCheck || [],
 
 
 
         failures:
-          analysis.failures || [],
+        analysis.failures || [],
 
 
 
         costs:
-          analysis.costs || [],
+        analysis.costs || [],
 
 
       };
+
+
+
 
 
 
@@ -212,6 +341,7 @@ export default function AnalysisButton({ carUrl }: Props) {
 
 
 
+
       localStorage.setItem(
 
         "analysisHistory",
@@ -225,25 +355,43 @@ export default function AnalysisButton({ carUrl }: Props) {
 
 
 
-      setStatus("✅ Raport gotowy");
+
+
+      clearInterval(loader);
+
+
+
+      setProgress(100);
+
+
+
+      setStatus(
+        "✅ Raport gotowy"
+      );
 
 
 
 
 
 
-      setTimeout(() => {
+      setTimeout(()=>{
+
 
         router.push("/raport");
 
-      },800);
+
+      },1000);
 
 
 
 
 
 
-    } catch(error) {
+    }catch(error){
+
+
+
+      clearInterval(loader);
 
 
 
@@ -258,9 +406,9 @@ export default function AnalysisButton({ carUrl }: Props) {
 
         error instanceof Error
 
-          ? error.message
+        ? error.message
 
-          : "Nie udało się wykonać analizy AI"
+        : "Błąd analizy AI"
 
       );
 
@@ -272,18 +420,25 @@ export default function AnalysisButton({ carUrl }: Props) {
     }
 
 
+
   }
 
 
 
 
 
-  if(loading) {
+
+
+
+
+  if(loading){
+
 
 
     return (
 
-      <div className="mt-5 bg-black border border-zinc-700 rounded-xl p-6">
+
+      <div className="mt-5 bg-black border border-zinc-700 rounded-2xl p-6">
 
 
         <p className="text-center text-orange-400 font-bold text-lg">
@@ -295,32 +450,90 @@ export default function AnalysisButton({ carUrl }: Props) {
 
 
 
-        <div className="mt-6 text-gray-400 text-sm space-y-2">
+
+        <div className="mt-6 w-full bg-zinc-800 rounded-full h-3 overflow-hidden">
 
 
-          <p>✓ Analiza ogłoszenia</p>
+          <div
 
-          <p>✓ Ocena historii auta</p>
+            className="bg-orange-500 h-full transition-all duration-700"
 
-          <p>✓ Typowe awarie modelu</p>
+            style={{
 
-          <p>✓ Koszty utrzymania</p>
+              width:`${progress}%`
 
-          <p>✓ Pytania do sprzedającego</p>
+            }}
 
-          <p>✓ Kontrola auta na miejscu</p>
-
-          <p>✓ Negocjacja ceny</p>
-
-          <p>✓ Decyzja KUP / NEGOCJUJ / ODPUŚĆ</p>
+          />
 
 
         </div>
 
 
+
+
+
+        <p className="text-center text-gray-400 mt-3">
+
+          {progress}%
+
+
+        </p>
+
+
+
+
+
+
+
+
+        <div className="mt-6 space-y-3 text-sm">
+
+
+          {steps.map((step,index)=>(
+
+
+            <div
+
+              key={index}
+
+              className={
+
+                progress >= step.progress
+
+                ? "text-orange-400"
+
+                : "text-gray-600"
+
+              }
+
+            >
+
+              {progress >= step.progress
+                ? "✓"
+                : "○"
+              }
+
+              {" "}
+
+              {step.text}
+
+
+            </div>
+
+
+          ))}
+
+
+        </div>
+
+
+
       </div>
 
+
     );
+
 
   }
 
@@ -329,7 +542,10 @@ export default function AnalysisButton({ carUrl }: Props) {
 
 
 
+
+
   return (
+
 
     <button
 
@@ -341,7 +557,9 @@ export default function AnalysisButton({ carUrl }: Props) {
 
       🚗 Rozpocznij analizę AI
 
+
     </button>
+
 
   );
 
