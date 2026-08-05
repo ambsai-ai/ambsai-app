@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
-
+import { AnalysisReportSchema } from "@/types/analysisSchema";
 
 const openai = new OpenAI({
 
@@ -506,8 +506,39 @@ ODPUŚĆ
 
 
 
-    const analysis =
-      JSON.parse(content);
+    const parsedJSON =
+  JSON.parse(content);
+
+
+const validation =
+  AnalysisReportSchema.safeParse(parsedJSON);
+
+
+if (!validation.success) {
+
+  console.error(
+    "AI RESPONSE VALIDATION ERROR:",
+    validation.error
+  );
+
+
+  return NextResponse.json(
+
+    {
+      error: "AI zwróciło niepoprawny format raportu"
+    },
+
+    {
+      status:500
+    }
+
+  );
+
+}
+
+
+const analysis =
+  validation.data;
 
 
 
