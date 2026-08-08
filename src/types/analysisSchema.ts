@@ -1,41 +1,37 @@
 import { z } from "zod";
 
-
 export const AnalysisReportSchema = z.object({
-
   score: z.number(),
 
   decision: z.object({
     status: z.enum([
       "KUP",
       "NEGOCJUJ",
-      "ODPUŚĆ"
+      "ODPUŚĆ",
     ]),
-    reason: z.string()
+    reason: z.string(),
   }),
-
 
   car: z.object({
-
     brand: z.string(),
-
     model: z.string(),
-
     year: z.string(),
-
     engine: z.string(),
-
     mileage: z.string(),
-
-    price: z.string()
-
+    price: z.string(),
   }),
 
+  riskLevel: z.object({
+    level: z.enum([
+      "niski",
+      "średni",
+      "wysoki",
+    ]),
+    reason: z.string(),
+  }),
 
-  recommendation: z.string()
-
+  recommendation: z.string(),
 });
-
 
 export type AnalysisReportValidated =
   z.infer<typeof AnalysisReportSchema>;
